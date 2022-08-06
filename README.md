@@ -283,3 +283,41 @@ module.exports = new UserController()
 
 ```
 
+### 3. 拆分 controller 和 service
+
+service 层主要是包含数据库处理逻辑。
+
+创建 src/service/user.js 文件，并写入：
+
+```js
+class UserService {
+  async createUser(userName, password) {
+    // TODO: 数据库操作
+    return true
+  }
+}
+
+module.exports = new UserService()
+
+```
+
+改写 src/controller/user.js 文件：
+
+```js
+const { createUser } = require('../service/user')
+
+class UserController {
+  async register(ctx, next) {
+    const { userName, password } = ctx.request.body
+    const result = createUser(userName, password)
+    ctx.body = result
+  }
+  async login(ctx, next) {
+    ctx.body = 'Login'
+  }
+}
+
+module.exports = new UserController()
+
+```
+
