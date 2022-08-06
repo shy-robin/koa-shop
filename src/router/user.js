@@ -5,7 +5,7 @@ const router = new Router({
   prefix: '/users',
 })
 
-router.get('/register', register)
+router.post('/register', register)
 
 router.get('/login', login)
 
