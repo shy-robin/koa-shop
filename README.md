@@ -66,5 +66,46 @@ app.listen(3000, () => {
 3. 重启服务
    `npm run dev`
 
+### 2. 读取配置文件
+
+1. 安装 dotenv
+   `npm i dotenv`
+
+2. 在根目录下创建 .env 文件，并写入：
+
+   ```
+   PORT=3100
+   ```
+
+3. 创建 src/config/port.js 文件，并写入：
+
+   ```js
+   const dotEnv = require('dotenv')
+   
+   // 将 .env 中的配置项加载到 process.env 中
+   dotEnv.config()
+   
+   module.exports = process.env
+   
+   ```
+
+4. 改写 src/main.js 入口文件：
+
+   ```js
+   const Koa = require('koa')
+   const { PORT } = require('./config/port')
+   
+   const app = new Koa()
+   
+   app.use((ctx, next) => {
+     ctx.body = 'Hello, Koa!'
+   })
+   
+   app.listen(PORT, () => {
+     console.log(`Server is running on port ${PORT}.`)
+   })
+   
+   ```
+
 
 
