@@ -107,5 +107,60 @@ app.listen(3000, () => {
    
    ```
 
+## 四、编写路由
 
+1. 安装 koa-router
+   `npm i koa-router`
+
+2. 创建 src/router/user.js 文件，并写入：
+
+   ```js
+   const Router = require('koa-router')
+   
+   const router = new Router({
+     prefix: '/users'
+   })
+   
+   router.get('/', (ctx, next) => {
+     ctx.body = 'This is Users router.'
+   })
+   
+   module.exports = router
+   
+   ```
+
+3. 改写 src/main.js 文件：
+
+   ```js
+   const Koa = require('koa')
+   const { PORT } = require('./config/port')
+   const userRouter = require('./router/user')
+   
+   const app = new Koa()
+   
+   app.use((ctx, next) => {
+     ctx.body = 'Hello, Koa!'
+     next()
+   })
+   
+   app.use(userRouter.routes())
+   
+   app.listen(PORT, () => {
+     console.log(`Server is running on port ${PORT}.`)
+   })
+   
+   ```
+
+4. 在 api.rest 文件中测试：
+
+   ```
+   @baseUrl = http://localhost:3100
+   ###
+   GET {{baseUrl}}
+   
+   ###
+   GET {{baseUrl}}/users
+   ```
+
+   
 
