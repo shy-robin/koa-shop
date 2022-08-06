@@ -57,7 +57,14 @@ app.listen(3000, () => {
 2. 编辑 package.json 中的 scripts
 
    ```json
+     "scripts": {
+       "test": "echo \"Error: no test specified\" && exit 1",
+       "dev": "nodemon ./src/main.js"
+     },
    ```
 
-   
+3. 重启服务
+   `npm run dev`
+
+
 
