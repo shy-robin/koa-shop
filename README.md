@@ -162,5 +162,39 @@ app.listen(3000, () => {
    GET {{baseUrl}}/users
    ```
 
-   
+## 五、目录结构优化
+
+### 1. 拆分 http 服务和 app 业务
+
+原来 main.js 入口文件中包含 http 服务和 app 业务逻辑，结构不够清晰，因此可以做拆分。
+
+修改 main.js :
+
+```js
+// main.js 文件负责 http 服务
+const { PORT } = require('./config/port')
+const app = require('./app/index')
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`)
+})
+
+```
+
+创建 src/app/index.js 文件，并写入：
+
+```js
+// app/index.js 文件负责 app 业务逻辑
+const Koa = require('koa')
+const userRouter = require('./router/user')
+
+const app = new Koa()
+
+app.use(userRouter.routes())
+
+module.exports = app
+
+```
+
+
 

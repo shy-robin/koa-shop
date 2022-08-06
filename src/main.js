@@ -1,15 +1,6 @@
-const Koa = require('koa')
+// main.js 文件负责 http 服务
 const { PORT } = require('./config/port')
-const userRouter = require('./router/user')
-
-const app = new Koa()
-
-app.use((ctx, next) => {
-  ctx.body = 'Hello, Koa!'
-  next()
-})
-
-app.use(userRouter.routes())
+const app = require('./app/index')
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`)
