@@ -196,5 +196,45 @@ module.exports = app
 
 ```
 
+### 2. 拆分 router 和 controller
+
+路由：解析不同的 url，不同的请求方法对应不同的控制器；
+
+控制器: 处理不同的业务。
+
+src/router/user.js
+
+```js
+const Router = require('koa-router')
+const { register, login } = require('../controller/user')
+
+const router = new Router({
+  prefix: '/users',
+})
+
+router.get('/register', register)
+
+router.get('/login', login)
+
+module.exports = router
+
+```
+
+src/controller/user.js
+
+```js
+class UserController {
+  async register(ctx, next) {
+    ctx.body = 'Register'
+  }
+  async login(ctx, next) {
+    ctx.body = 'Login'
+  }
+}
+
+module.exports = new UserController()
+
+```
+
 
 

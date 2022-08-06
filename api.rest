@@ -3,4 +3,4 @@
 GET {{baseUrl}}
 
 ###
-GET {{baseUrl}}/users
+GET {{baseUrl}}/users/login
