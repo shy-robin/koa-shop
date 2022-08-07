@@ -846,3 +846,134 @@ router.post(
 
 测试。
 
+### 9. 颁发 token
+
+安装 jsonwebtoken：https://www.npmjs.com/package/jsonwebtoken
+
+`npm i jsonwebtoken`
+
+改写 `login` 函数：
+
+```js
+  async login(ctx, next) {
+    const { userName, password } = ctx.request.body
+
+    try {
+      // 判断是否存在用户名
+      const user = await queryUser({ userName })
+      if (!user) {
+        return ctx.app.emit('error', USER_NAME_NOT_EXISTED, ctx)
+      }
+
+      // 判断密码是否匹配
+      const isPasswordSame = bcrypt.compareSync(password, user.password)
+      if (!isPasswordSame) {
+        return ctx.app.emit('error', PASSWORD_INCORRECT, ctx)
+      }
+
+      // 登录成功，颁发 token
+      ctx.body = {
+        code: 0,
+        message: `登录成功，${userName}`,
+        result: {
+          // 在 token 的 payload 中记录 id, userName, isAdmin 信息
+          token: jwt.sign(
+            {
+              id: user.id,
+              userName: user.userName,
+              isAdmin: user.isAdmin,
+            },
+            JWT_SECRET,
+            { expiresIn: '1d' }
+          ),
+        },
+      }
+    } catch (error) {
+      return ctx.app.emit('error', QUERY_USER_ERROR, ctx)
+    }
+
+    await next()
+  }
+```
+
+### 10. 用户认证
+
+创建 src/middleware/authorization.js，写入验证 token 逻辑：
+
+```js
+const jwt = require('jsonwebtoken')
+const { JWT_SECRET } = require('../config')
+const { TOKEN_EXPIRED, TOKEN_INVALID } = require('../constant/error')
+
+/**
+ * 用户认证
+ */
+const auth = async (ctx, next) => {
+  // 从请求头中解析出 token
+  const { authorization } = ctx.request.header
+  if (!authorization) return
+  const token = authorization.replace('Bearer ', '')
+
+  try {
+    // 验证 token，并获取到 token 中的 payload 信息
+    const user = jwt.verify(token, JWT_SECRET)
+    ctx.state.user = user
+  } catch (error) {
+    switch (error.name) {
+      case 'TokenExpiredError':
+        return ctx.app.emit('error', TOKEN_EXPIRED, ctx)
+      case 'JsonWebTokenError':
+        return ctx.app.emit('error', TOKEN_INVALID, ctx)
+    }
+  }
+
+  await next()
+}
+
+module.exports = { auth }
+
+```
+
+在 router 中新增 patch 接口，测试 token：
+
+```js
+router.patch('/test', auth, async (ctx, next) => {
+  console.log(ctx.state.user)
+  ctx.body = '修改密码成功'
+
+  await next()
+})
+```
+
+在请求中携带 token，测试响应：
+
+```
+@baseUrl = http://localhost:3100
+###
+GET {{baseUrl}}
+
+### 登录
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "userName": "Mike",
+  "password": "123456"
+}
+
+### 注册
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "userName": "Mike",
+  "password": "123456"
+}
+
+### test
+PATCH {{baseUrl}}/users/test
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hbWUiOiJNaWtlIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTY1OTg2MTYxOSwiZXhwIjoxNjU5OTQ4MDE5fQ.9k2a67yjXwbZN1Onofeq43sdBSI66ftyr4vv9Q6OPvY
+
+```
+

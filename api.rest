@@ -2,14 +2,25 @@
 ###
 GET {{baseUrl}}
 
-###
-GET {{baseUrl}}/users/login
+### 登录
+POST {{baseUrl}}/users/login
+Content-Type: application/json
 
-###
+{
+  "userName": "Mike",
+  "password": "123456"
+}
+
+### 注册
 POST {{baseUrl}}/users/register
 Content-Type: application/json
 
 {
-  "userName": "ShyRobin4",
-  "password": "test.password4"
+  "userName": "Mike",
+  "password": "123456"
 }
+
+### test
+PATCH {{baseUrl}}/users/test
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hbWUiOiJNaWtlIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTY1OTg2MTYxOSwiZXhwIjoxNjU5OTQ4MDE5fQ.9k2a67yjXwbZN1Onofeq43sdBSI66ftyr4vv9Q6OPvY

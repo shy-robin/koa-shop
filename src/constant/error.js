@@ -19,4 +19,24 @@ module.exports = {
     message: '查询用户失败',
     result: '',
   },
+  USER_NAME_NOT_EXISTED: {
+    code: 10005,
+    message: '用户名不存在',
+    result: '',
+  },
+  PASSWORD_INCORRECT: {
+    code: 10006,
+    message: '密码错误',
+    result: '',
+  },
+  TOKEN_EXPIRED: {
+    code: 10007,
+    message: 'token 已过期',
+    result: '',
+  },
+  TOKEN_INVALID: {
+    code: 10008,
+    message: 'token 无效',
+    result: '',
+  },
 }
