@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const { register, login } = require('../controller/user')
+const { register, login, changePassword } = require('../controller/user')
 const {
   validateParamsNotNull,
   validateUserNameUnique,
@@ -21,11 +21,7 @@ router.post(
 
 router.post('/login', validateParamsNotNull, login)
 
-router.patch('/test', auth, async (ctx, next) => {
-  console.log(ctx.state.user)
-  ctx.body = '修改密码成功'
-
-  await next()
-})
+// RESTful API patch 表示部分更新
+router.patch('/', auth, changePassword)
 
 module.exports = router

@@ -39,4 +39,24 @@ module.exports = {
     message: 'token 无效',
     result: '',
   },
+  DUPLICATE_PASSWORD: {
+    code: 10009,
+    message: '新旧密码重复',
+    result: '',
+  },
+  WRONG_PASSWORD: {
+    code: 10010,
+    message: '旧密码错误',
+    result: '',
+  },
+  UPDATE_PASSWORD_ERROR: {
+    code: 10011,
+    message: '更新密码失败',
+    result: '',
+  },
+  TOKEN_NOT_EXISTS: {
+    code: 10012,
+    message: 'token 不存在',
+    result: '',
+  },
 }

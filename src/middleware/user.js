@@ -46,9 +46,8 @@ const validateUserNameUnique = async (ctx, next) => {
 const encryptPassword = async (ctx, next) => {
   const { password } = ctx.request.body
 
-  var salt = bcrypt.genSaltSync(10) // 加盐
-  var hash = bcrypt.hashSync(password, salt)
-
+  const salt = bcrypt.genSaltSync(10) // 加盐
+  const hash = bcrypt.hashSync(password, salt)
   ctx.request.body.password = hash
 
   await next()

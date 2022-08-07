@@ -7,8 +7,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "userName": "Mike",
-  "password": "123456"
+  "userName": "Robin1",
+  "password": "test"
 }
 
 ### 注册
@@ -16,11 +16,16 @@ POST {{baseUrl}}/users/register
 Content-Type: application/json
 
 {
-  "userName": "Mike",
-  "password": "123456"
+  "userName": "Robin1",
+  "password": "test"
 }
 
-### test
-PATCH {{baseUrl}}/users/test
+### 修改密码
+PATCH {{baseUrl}}/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hbWUiOiJNaWtlIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTY1OTg2MTYxOSwiZXhwIjoxNjU5OTQ4MDE5fQ.9k2a67yjXwbZN1Onofeq43sdBSI66ftyr4vv9Q6OPvY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlck5hbWUiOiJSb2JpbjEiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjU5ODc0MzMxLCJleHAiOjE2NTk5NjA3MzF9.KcifZPq63K-BJvGwqmsRjdDAddD2Tmfkez-0ZkjxsW4
+
+{
+  "oldPassword": "test1",
+  "newPassword": "test"
+}

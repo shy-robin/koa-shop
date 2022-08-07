@@ -38,7 +38,6 @@ app.use((ctx, next) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000...')
 })
-
 ```
 
 ### 3. 运行模版
@@ -81,12 +80,11 @@ app.listen(3000, () => {
 
    ```js
    const dotEnv = require('dotenv')
-   
+
    // 将 .env 中的配置项加载到 process.env 中
    dotEnv.config()
-   
+
    module.exports = process.env
-   
    ```
 
 4. 改写 src/main.js 入口文件：
@@ -104,7 +102,6 @@ app.listen(3000, () => {
    app.listen(PORT, () => {
      console.log(`Server is running on port ${PORT}.`)
    })
-   
    ```
 
 ### 3. 解析 body
@@ -119,14 +116,13 @@ app.listen(3000, () => {
    const Koa = require('koa')
    const KoaBody = require('koa-body')
    const userRouter = require('../router/user')
-   
+
    const app = new Koa()
-   
+
    app.use(KoaBody()) // 注意，koa-body 中间件应作为首个中间件，这样后面的中间件的 ctx 才能解析出 ctx.request.body
    app.use(userRouter.routes())
-   
+
    module.exports = app
-   
    ```
 
 3. 在中间件中使用解析得到的 body
@@ -152,8 +148,6 @@ app.listen(3000, () => {
    }
    ```
 
-   
-
 ## 四、编写路由
 
 1. 安装 koa-router
@@ -163,17 +157,16 @@ app.listen(3000, () => {
 
    ```js
    const Router = require('koa-router')
-   
+
    const router = new Router({
-     prefix: '/users'
+     prefix: '/users',
    })
-   
+
    router.get('/', (ctx, next) => {
      ctx.body = 'This is Users router.'
    })
-   
+
    module.exports = router
-   
    ```
 
 3. 改写 src/main.js 文件：
@@ -182,20 +175,19 @@ app.listen(3000, () => {
    const Koa = require('koa')
    const { PORT } = require('./config/port')
    const userRouter = require('./router/user')
-   
+
    const app = new Koa()
-   
+
    app.use((ctx, next) => {
      ctx.body = 'Hello, Koa!'
      next()
    })
-   
+
    app.use(userRouter.routes())
-   
+
    app.listen(PORT, () => {
      console.log(`Server is running on port ${PORT}.`)
    })
-   
    ```
 
 4. 在 api.rest 文件中测试：
@@ -225,7 +217,6 @@ const app = require('./app/index')
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`)
 })
-
 ```
 
 创建 src/app/index.js 文件，并写入：
@@ -240,7 +231,6 @@ const app = new Koa()
 app.use(userRouter.routes())
 
 module.exports = app
-
 ```
 
 ### 2. 拆分 router 和 controller
@@ -264,7 +254,6 @@ router.get('/register', register)
 router.get('/login', login)
 
 module.exports = router
-
 ```
 
 src/controller/user.js
@@ -280,7 +269,6 @@ class UserController {
 }
 
 module.exports = new UserController()
-
 ```
 
 ### 3. 拆分 controller 和 service
@@ -298,7 +286,6 @@ class UserService {
 }
 
 module.exports = new UserService()
-
 ```
 
 改写 src/controller/user.js 文件：
@@ -318,7 +305,6 @@ class UserController {
 }
 
 module.exports = new UserController()
-
 ```
 
 ## 六、数据库
@@ -353,7 +339,7 @@ ORM: 对象关系映射：
 
    ```js
    const { Sequelize } = require('sequelize')
-   
+
    const {
      MYSQL_HOST,
      MYSQL_PORT,
@@ -361,13 +347,13 @@ ORM: 对象关系映射：
      MYSQL_PWD,
      MYSQL_DB,
    } = require('../config/config.default')
-   
+
    const seq = new Sequelize(MYSQL_DB, MYSQL_USER, MYSQL_PWD, {
      host: MYSQL_HOST,
      port: MYSQL_PORT,
      dialect: 'mysql',
    })
-   
+
    seq
      .authenticate()
      .then(() => {
@@ -376,16 +362,15 @@ ORM: 对象关系映射：
      .catch((err) => {
        console.log('数据库连接失败', err)
      })
-   
+
    module.exports = seq
-   
    ```
 
 3. 编写配置：
 
    ```
    APP_PORT=3100
-   
+
    MYSQL_HOST = localhost
    MYSQL_PORT = 3306
    MYSQL_USER = root
@@ -434,7 +419,6 @@ User.sync({
 })
 
 module.exports = User
-
 ```
 
 ### 4. 添加数据操作
@@ -457,7 +441,6 @@ class UserService {
 }
 
 module.exports = new UserService()
-
 ```
 
 改写 src/controller/user.js :
@@ -487,7 +470,6 @@ class UserController {
 }
 
 module.exports = new UserController()
-
 ```
 
 利用 rest client 插件进行测试。
@@ -546,7 +528,6 @@ class UserController {
 }
 
 module.exports = new UserController()
-
 ```
 
 在 src/service/user.js 中增加查询用户的操作：
@@ -580,7 +561,6 @@ class UserService {
 }
 
 module.exports = new UserService()
-
 ```
 
 ### 6. 拆分中间件
@@ -635,7 +615,6 @@ module.exports = {
   validateParamsNotNull,
   validateUserNameUnique,
 }
-
 ```
 
 改写 src/router/user.js 文件：
@@ -662,7 +641,6 @@ router.post(
 router.get('/login', login)
 
 module.exports = router
-
 ```
 
 测试。
@@ -684,7 +662,6 @@ module.exports = {
     result: '',
   },
 }
-
 ```
 
 改写 src/middleware/user.js 文件：
@@ -738,7 +715,6 @@ module.exports = {
   validateParamsNotNull,
   validateUserNameUnique,
 }
-
 ```
 
 改写 src/app/index.js 文件：
@@ -758,7 +734,6 @@ app.use(userRouter.routes())
 app.on('error', errorHandler) // 统一错误处理
 
 module.exports = app
-
 ```
 
 创建 src/constant/errorHandler.js 并写入：
@@ -778,7 +753,6 @@ module.exports = (error, ctx) => {
   }
   ctx.body = error
 }
-
 ```
 
 对于操作数据库产生的错误，应当用 try catch 语法捕获错误，并统一处理，如：
@@ -865,7 +839,7 @@ router.post(
         return ctx.app.emit('error', USER_NAME_NOT_EXISTED, ctx)
       }
 
-      // 判断密码是否匹配
+      // 判断密码是否匹配(注意，password 未加密， user.password 已加密)
       const isPasswordSame = bcrypt.compareSync(password, user.password)
       if (!isPasswordSame) {
         return ctx.app.emit('error', PASSWORD_INCORRECT, ctx)
@@ -931,7 +905,6 @@ const auth = async (ctx, next) => {
 }
 
 module.exports = { auth }
-
 ```
 
 在 router 中新增 patch 接口，测试 token：
@@ -976,4 +949,3 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hbWUiOiJNaWtlIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTY1OTg2MTYxOSwiZXhwIjoxNjU5OTQ4MDE5fQ.9k2a67yjXwbZN1Onofeq43sdBSI66ftyr4vv9Q6OPvY
 
 ```
-

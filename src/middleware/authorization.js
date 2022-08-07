@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = require('../config')
-const { TOKEN_EXPIRED, TOKEN_INVALID } = require('../constant/error')
+const {
+  TOKEN_EXPIRED,
+  TOKEN_INVALID,
+  TOKEN_NOT_EXISTS,
+} = require('../constant/error')
 
 /**
  * 用户认证
@@ -8,7 +12,9 @@ const { TOKEN_EXPIRED, TOKEN_INVALID } = require('../constant/error')
 const auth = async (ctx, next) => {
   // 从请求头中解析出 token
   const { authorization } = ctx.request.header
-  if (!authorization) return
+  if (!authorization) {
+    return ctx.app.emit('error', TOKEN_NOT_EXISTS, ctx)
+  }
   const token = authorization.replace('Bearer ', '')
 
   try {

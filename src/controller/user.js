@@ -1,11 +1,14 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { createUser, queryUser } = require('../service/user')
+const { createUser, queryUser, updatePasswordById } = require('../service/user')
 const {
   CREATE_USER_ERROR,
   USER_NAME_NOT_EXISTED,
   QUERY_USER_ERROR,
   PASSWORD_INCORRECT,
+  DUPLICATE_PASSWORD,
+  WRONG_PASSWORD,
+  UPDATE_PASSWORD_ERROR,
 } = require('../constant/error')
 const { JWT_SECRET } = require('../config')
 
@@ -68,6 +71,33 @@ class UserController {
       }
     } catch (error) {
       return ctx.app.emit('error', QUERY_USER_ERROR, ctx)
+    }
+
+    await next()
+  }
+
+  async changePassword(ctx, next) {
+    const { id } = ctx.state.user
+    const { oldPassword, newPassword } = ctx.request.body
+    if (oldPassword === newPassword) {
+      return ctx.app.emit('error', DUPLICATE_PASSWORD, ctx)
+    }
+    const user = await queryUser({ id })
+    if (!bcrypt.compareSync(oldPassword, user.password)) {
+      return ctx.app.emit('error', WRONG_PASSWORD, ctx)
+    }
+    try {
+      const rst = await updatePasswordById(id, newPassword)
+      if (!rst) {
+        return ctx.app.emit('error', UPDATE_PASSWORD_ERROR, ctx)
+      }
+      ctx.body = {
+        code: 0,
+        message: '密码修改成功',
+        result: '',
+      }
+    } catch (error) {
+      return ctx.app.emit('error', UPDATE_PASSWORD_ERROR, ctx)
     }
 
     await next()

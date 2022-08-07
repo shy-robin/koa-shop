@@ -8,6 +8,7 @@ class UserService {
     })
     return rst.dataValues
   }
+
   async queryUser({ id, userName, password, isAdmin }) {
     const whereOpt = {}
 
@@ -22,6 +23,18 @@ class UserService {
     })
 
     return rst ? rst.dataValues : null
+  }
+
+  async updatePasswordById(id, password) {
+    const rst = await User.update(
+      { password },
+      {
+        where: {
+          id,
+        },
+      }
+    )
+    return rst[0] > 0
   }
 }
 

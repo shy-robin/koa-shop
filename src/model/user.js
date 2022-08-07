@@ -24,8 +24,8 @@ const User = seq.define('User', {
 })
 
 // 强制同步（如果存在表则覆盖，不存在则新建）
-User.sync({
-  force: true,
-})
+// User.sync({
+//   force: true,
+// })
 
 module.exports = User
