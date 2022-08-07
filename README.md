@@ -437,3 +437,58 @@ module.exports = User
 
 ```
 
+### 4. 添加数据操作
+
+所有关于数据库的操作逻辑都应放在 service 中，service 调用 model 层完成对数据库的操作。
+
+改写 src/service/user.js ：
+
+```js
+const User = require('../model/user')
+
+class UserService {
+  async createUser(userName, password) {
+    const rst = await User.create({
+      userName,
+      password,
+    })
+    return rst.dataValues
+  }
+}
+
+module.exports = new UserService()
+
+```
+
+改写 src/controller/user.js :
+
+```js
+const { createUser } = require('../service/user')
+
+class UserController {
+  async register(ctx, next) {
+    // 1. 读取请求参数
+    const { userName, password } = ctx.request.body
+    // 2. 操作数据库
+    const rst = await createUser(userName, password)
+    // 3. 返回响应结果
+    ctx.body = {
+      code: 0,
+      message: '用户注册成功',
+      result: {
+        id: rst.id,
+        userName: rst.userName,
+      },
+    }
+  }
+  async login(ctx, next) {
+    ctx.body = 'Login'
+  }
+}
+
+module.exports = new UserController()
+
+```
+
+利用 rest client 插件进行测试。
+
