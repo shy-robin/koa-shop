@@ -1,4 +1,9 @@
 const { queryUser } = require('../service/user')
+const {
+  USER_PARAMS_NULL,
+  USER_NAME_EXISTED,
+  QUERY_USER_ERROR,
+} = require('../constant/error')
 
 /**
  * 验证请求参数是否为空
@@ -7,12 +12,7 @@ const validateParamsNotNull = async (ctx, next) => {
   const { userName, password } = ctx.request.body
 
   if (!userName || !password) {
-    ctx.status = 400 // 400 Bad Request
-    ctx.body = {
-      code: 10001,
-      message: '用户名或密码为空',
-      result: '',
-    }
+    ctx.app.emit('error', USER_PARAMS_NULL, ctx)
     return
   }
 
@@ -25,14 +25,14 @@ const validateParamsNotNull = async (ctx, next) => {
 const validateUserNameUnique = async (ctx, next) => {
   const { userName } = ctx.request.body
 
-  if (await queryUser({ userName })) {
-    // 注意 queryUser 是一个 Promise，需要 await 结果
-    ctx.status = 409 // 409 Conflict
-    ctx.body = {
-      code: 10002,
-      message: '用户名已存在',
-      result: '',
+  try {
+    if (await queryUser({ userName })) {
+      // 注意 queryUser 是一个 Promise，需要 await 结果
+      ctx.app.emit('error', USER_NAME_EXISTED, ctx)
+      return
     }
+  } catch (error) {
+    ctx.app.emit('error', QUERY_USER_ERROR, ctx)
     return
   }
 

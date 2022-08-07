@@ -667,3 +667,144 @@ module.exports = router
 
 测试。
 
+### 7. 统一错误处理
+
+编写统一错误响应文件 src/constant/error.js :
+
+```js
+module.exports = {
+  USER_PARAMS_NULL: {
+    code: 10001,
+    message: '用户名或密码为空',
+    result: '',
+  },
+  USER_NAME_EXISTED: {
+    code: 10002,
+    message: '用户名已存在',
+    result: '',
+  },
+}
+
+```
+
+改写 src/middleware/user.js 文件：
+
+```js
+const { queryUser } = require('../service/user')
+const { USER_PARAMS_NULL, USER_NAME_EXISTED } = require('../constant/error')
+
+/**
+ * 验证请求参数是否为空
+ */
+const validateParamsNotNull = async (ctx, next) => {
+  const { userName, password } = ctx.request.body
+
+  if (!userName || !password) {
+    // ctx.status = 400 // 400 Bad Request
+    // ctx.body = {
+    //   code: 10001,
+    //   message: '用户名或密码为空',
+    //   result: '',
+    // }
+    ctx.app.emit('error', USER_PARAMS_NULL, ctx)
+    return
+  }
+
+  await next()
+}
+
+/**
+ * 验证用户名是否已存在
+ */
+const validateUserNameUnique = async (ctx, next) => {
+  const { userName } = ctx.request.body
+
+  if (await queryUser({ userName })) {
+    // 注意 queryUser 是一个 Promise，需要 await 结果
+    // ctx.status = 409 // 409 Conflict
+    // ctx.body = {
+    //   code: 10002,
+    //   message: '用户名已存在',
+    //   result: '',
+    // }
+    ctx.app.emit('error', USER_NAME_EXISTED, ctx)
+    return
+  }
+
+  await next()
+}
+
+module.exports = {
+  validateParamsNotNull,
+  validateUserNameUnique,
+}
+
+```
+
+改写 src/app/index.js 文件：
+
+```js
+// app/index.js 文件负责 app 业务逻辑
+const Koa = require('koa')
+const KoaBody = require('koa-body')
+const userRouter = require('../router/user')
+const errorHandler = require('../constant/errorHandler')
+
+const app = new Koa()
+
+app.use(KoaBody()) // 注意，koa-body 中间件应作为首个中间件，这样后面的中间件的 ctx 才能解析出 ctx.request.body
+app.use(userRouter.routes())
+
+app.on('error', errorHandler) // 统一错误处理
+
+module.exports = app
+
+```
+
+创建 src/constant/errorHandler.js 并写入：
+
+```js
+module.exports = (error, ctx) => {
+  switch (error.code) {
+    case 10001:
+      ctx.status = 400 // 400 Bad Request
+      break
+    case 10002:
+      ctx.status = 409 // 409 Conflict
+      break
+    default:
+      ctx.status = 500
+      break
+  }
+  ctx.body = error
+}
+
+```
+
+对于操作数据库产生的错误，应当用 try catch 语法捕获错误，并统一处理，如：
+
+```js
+  async register(ctx, next) {
+    // 1. 读取请求参数
+    const { userName, password } = ctx.request.body
+    try {
+      // 2. 操作数据库
+      const rst = await createUser(userName, password)
+      // 3. 返回响应结果
+      ctx.body = {
+        code: 0,
+        message: '用户注册成功',
+        result: {
+          id: rst.id,
+          userName: rst.userName,
+        },
+      }
+    } catch (error) {
+      ctx.app.emit('error', CREATE_USER_ERROR, ctx)
+      return
+    }
+
+    await next()
+  }
+```
+
