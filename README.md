@@ -321,3 +321,77 @@ module.exports = new UserController()
 
 ```
 
+## 六、数据库
+
+### 1. 安装 mysql
+
+根据系统，安装对应的 mysql。
+
+修改 root 密码：
+
+`mysqladmin -uroot -p[oldPassword] password [newPassword]`
+
+> 注意，如果出现 warning，不用理会，密码依旧修改成功了。
+
+### 2. 集成 sequelize
+
+sequelize：一个 ORM 数据库工具；
+
+官网：https://sequelize.org/docs/v6/getting-started/
+
+ORM: 对象关系映射：
+
+- 数据表映射(对应)一个类；
+- 数据表中的数据行(记录)对应一个对象；
+- 数据表字段对应对象的属性；
+- 数据表的操作对应对象的方法。
+
+1. 安装相应依赖
+   `npm install --save sequelize mysql2`
+
+2. 创建 src/db/index.js，连接数据库：
+
+   ```js
+   const { Sequelize } = require('sequelize')
+   
+   const {
+     MYSQL_HOST,
+     MYSQL_PORT,
+     MYSQL_USER,
+     MYSQL_PWD,
+     MYSQL_DB,
+   } = require('../config/config.default')
+   
+   const seq = new Sequelize(MYSQL_DB, MYSQL_USER, MYSQL_PWD, {
+     host: MYSQL_HOST,
+     port: MYSQL_PORT,
+     dialect: 'mysql',
+   })
+   
+   seq
+     .authenticate()
+     .then(() => {
+       console.log('数据库连接成功')
+     })
+     .catch((err) => {
+       console.log('数据库连接失败', err)
+     })
+   
+   module.exports = seq
+   
+   ```
+
+3. 编写配置：
+
+   ```
+   APP_PORT=3100
+   
+   MYSQL_HOST = localhost
+   MYSQL_PORT = 3306
+   MYSQL_USER = root
+   MYSQL_PWD = ******
+   MYSQL_DB = KoaShop
+   ```
+
+4. 测试代码：
+   `node src/db/index.js`
