@@ -8,6 +8,21 @@ class UserService {
     })
     return rst.dataValues
   }
+  async queryUser({ id, userName, password, isAdmin }) {
+    const whereOpt = {}
+
+    id && Object.assign(whereOpt, { id })
+    userName && Object.assign(whereOpt, { userName })
+    password && Object.assign(whereOpt, { password })
+    isAdmin && Object.assign(whereOpt, { isAdmin })
+
+    const rst = await User.findOne({
+      attributes: ['id', 'userName', 'password', 'isAdmin'],
+      where: whereOpt,
+    })
+
+    return rst ? rst.dataValues : null
+  }
 }
 
 module.exports = new UserService()

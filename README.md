@@ -492,3 +492,94 @@ module.exports = new UserController()
 
 利用 rest client 插件进行测试。
 
+### 5. 错误处理
+
+在 src/controller/user.js 中，增加对请求参数的校验，如果请求参数为空，返回对应的错误响应；如果操作数据已存在，也返回对应的错误响应。
+
+```js
+const { createUser, queryUser } = require('../service/user')
+
+class UserController {
+  async register(ctx, next) {
+    // 1. 读取请求参数
+    const { userName, password } = ctx.request.body
+
+    // #region 错误处理
+    // 合法性
+    if (!userName || !password) {
+      ctx.status = 400 // 400 Bad Request
+      ctx.body = {
+        code: 10001,
+        message: '用户名或密码为空',
+        result: '',
+      }
+      return
+    }
+    // 合理性
+    if (queryUser({ userName })) {
+      ctx.status = 409 // 409 Conflict
+      ctx.body = {
+        code: 10002,
+        message: '用户名已存在',
+        result: '',
+      }
+      return
+    }
+
+    // #endregion
+
+    // 2. 操作数据库
+    const rst = await createUser(userName, password)
+    // 3. 返回响应结果
+    ctx.body = {
+      code: 0,
+      message: '用户注册成功',
+      result: {
+        id: rst.id,
+        userName: rst.userName,
+      },
+    }
+  }
+  async login(ctx, next) {
+    ctx.body = 'Login'
+  }
+}
+
+module.exports = new UserController()
+
+```
+
+在 src/service/user.js 中增加查询用户的操作：
+
+```js
+const User = require('../model/user')
+
+class UserService {
+  async createUser(userName, password) {
+    const rst = await User.create({
+      userName,
+      password,
+    })
+    return rst.dataValues
+  }
+  async queryUser({ id, userName, password, isAdmin }) {
+    const whereOpt = {}
+
+    id && Object.assign(whereOpt, { id })
+    userName && Object.assign(whereOpt, { userName })
+    password && Object.assign(whereOpt, { password })
+    isAdmin && Object.assign(whereOpt, { isAdmin })
+
+    const rst = await User.findOne({
+      attributes: ['id', 'userName', 'password', 'isAdmin'],
+      where: whereOpt,
+    })
+
+    return rst ? rst.dataValues : null
+  }
+}
+
+module.exports = new UserService()
+
+```
+
