@@ -3,6 +3,7 @@ const { register, login } = require('../controller/user')
 const {
   validateParamsNotNull,
   validateUserNameUnique,
+  encryptPassword,
 } = require('../middleware/user')
 
 const router = new Router({
@@ -13,6 +14,7 @@ router.post(
   '/register',
   validateParamsNotNull,
   validateUserNameUnique,
+  encryptPassword,
   register
 )
 

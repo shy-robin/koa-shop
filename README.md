@@ -808,3 +808,41 @@ module.exports = (error, ctx) => {
   }
 ```
 
+### 8. 加密处理
+
+将密码保存到数据库之前，应当对密码进行加密处理。
+
+这里用到 bcryptjs 库进行加密解密处理，https://www.npmjs.com/package/bcryptjs。
+
+在 src/middleware/user.js 中封装中间件：
+
+```js
+/**
+ * 加密密码
+ */
+const encryptPassword = async (ctx, next) => {
+  const { password } = ctx.request.body
+
+  var salt = bcrypt.genSaltSync(10) // 加盐
+  var hash = bcrypt.hashSync(password, salt)
+
+  ctx.request.body.password = hash
+
+  await next()
+}
+```
+
+在 router 中使用该中间件：
+
+```js
+router.post(
+  '/register',
+  validateParamsNotNull,
+  validateUserNameUnique,
+  encryptPassword,
+  register
+)
+```
+
+测试。
+

@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs')
 const { queryUser } = require('../service/user')
 const {
   USER_PARAMS_NULL,
@@ -39,7 +40,22 @@ const validateUserNameUnique = async (ctx, next) => {
   await next()
 }
 
+/**
+ * 加密密码
+ */
+const encryptPassword = async (ctx, next) => {
+  const { password } = ctx.request.body
+
+  var salt = bcrypt.genSaltSync(10) // 加盐
+  var hash = bcrypt.hashSync(password, salt)
+
+  ctx.request.body.password = hash
+
+  await next()
+}
+
 module.exports = {
   validateParamsNotNull,
   validateUserNameUnique,
+  encryptPassword,
 }
