@@ -583,3 +583,87 @@ module.exports = new UserService()
 
 ```
 
+### 6. 拆分中间件
+
+为了使代码的逻辑更加清晰，同时复用一些代码，我们可以拆分一个中间件层，封装多个中间件函数。
+
+创建 src/middleware/user.js ，并写入：
+
+```js
+const { queryUser } = require('../service/user')
+
+/**
+ * 验证请求参数是否为空
+ */
+const validateParamsNotNull = async (ctx, next) => {
+  const { userName, password } = ctx.request.body
+
+  if (!userName || !password) {
+    ctx.status = 400 // 400 Bad Request
+    ctx.body = {
+      code: 10001,
+      message: '用户名或密码为空',
+      result: '',
+    }
+    return
+  }
+
+  await next()
+}
+
+/**
+ * 验证用户名是否已存在
+ */
+const validateUserNameUnique = async (ctx, next) => {
+  const { userName } = ctx.request.body
+
+  if (await queryUser({ userName })) {
+    // 注意 queryUser 是一个 Promise，需要 await 结果
+    ctx.status = 409 // 409 Conflict
+    ctx.body = {
+      code: 10002,
+      message: '用户名已存在',
+      result: '',
+    }
+    return
+  }
+
+  await next()
+}
+
+module.exports = {
+  validateParamsNotNull,
+  validateUserNameUnique,
+}
+
+```
+
+改写 src/router/user.js 文件：
+
+```js
+const Router = require('koa-router')
+const { register, login } = require('../controller/user')
+const {
+  validateParamsNotNull,
+  validateUserNameUnique,
+} = require('../middleware/user')
+
+const router = new Router({
+  prefix: '/users',
+})
+
+router.post(
+  '/register',
+  validateParamsNotNull,
+  validateUserNameUnique,
+  register
+)
+
+router.get('/login', login)
+
+module.exports = router
+
+```
+
+测试。
+
