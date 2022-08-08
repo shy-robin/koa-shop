@@ -7,7 +7,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "userName": "Robin1",
+  "userName": "Robin",
   "password": "test"
 }
 
@@ -16,16 +16,16 @@ POST {{baseUrl}}/users/register
 Content-Type: application/json
 
 {
-  "userName": "Robin1",
+  "userName": "Robin",
   "password": "test"
 }
 
 ### 修改密码
 PATCH {{baseUrl}}/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlck5hbWUiOiJSb2JpbjEiLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjU5ODc0MzMxLCJleHAiOjE2NTk5NjA3MzF9.KcifZPq63K-BJvGwqmsRjdDAddD2Tmfkez-0ZkjxsW4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwidXNlck5hbWUiOiJSb2JpbiIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2NTk5MjM4ODEsImV4cCI6MTY2MDAxMDI4MX0.8xUSb0joMgIskiEJi18Lfxxvgtf2j0mPz-anFKE59S8
 
 {
-  "oldPassword": "test1",
-  "newPassword": "test"
+  "oldPassword": "test",
+  "newPassword": "test111"
 }
