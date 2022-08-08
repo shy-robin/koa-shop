@@ -7,7 +7,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "userName": "Robin",
+  "userName": "Robin3",
   "password": "test"
 }
 
@@ -30,5 +30,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwidXNlck5hb
   "newPassword": "test111"
 }
 
-###
-GET {{baseUrl}}/goods
+### 上传图片
+POST {{baseUrl}}/goods/upload
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlck5hbWUiOiJSb2JpbjMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE2NTk5MzAwMzgsImV4cCI6MTY2MDAxNjQzOH0.tsZ4xAz-waPjLmOPcDJ9MB-oF2R0ZHRo8t0bMdaa34E

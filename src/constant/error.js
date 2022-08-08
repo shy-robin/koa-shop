@@ -59,4 +59,10 @@ module.exports = {
     message: 'token 不存在',
     result: '',
   },
+
+  NO_ADMIN_PERMISSION: {
+    code: 10101,
+    message: '无管理员权限',
+    result: '',
+  },
 }

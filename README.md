@@ -959,7 +959,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hb
 
 ```
 
-## 七、自动加载路由
+## 七、上传图片
+
+### 1. 自动加载路由
 
 按照之前的写法， 每增加一个路由文件，就需要在 src/app/index.js 中将导出的路由中间件引入，随着代码量的增加，src/app/index.js 中的路由引入代码也会越来越多。
 
@@ -998,5 +1000,39 @@ app.use(KoaBody()) // 注意，koa-body 中间件应作为首个中间件，这�
   注意，在 koa 中 use() 里面只能包含一个中间件，如果要加多个中间件则需要链式调用。
 */
 app.use(router.routes()).use(router.allowedMethods())
+```
+
+### 2. 验证管理员权限
+
+在 src/router/goods 中添加验证管理员权限的中间件：
+
+```js
+const Router = require('koa-router')
+const { auth, checkAdminPermission } = require('../middleware/authorization')
+const { upload } = require('../controller/goods')
+
+const router = new Router({
+  prefix: '/goods',
+})
+
+router.post('/upload', auth, checkAdminPermission, upload)
+
+module.exports = router
+
+```
+
+在 src/middleware/authorization.js 中添加相关逻辑：
+
+```js
+/**
+ * 验证用户是否有管理员权限
+ */
+const checkAdminPermission = async (ctx, next) => {
+  const { isAdmin } = ctx.state.user
+  if (!isAdmin) {
+    return ctx.app.emit('error', NO_ADMIN_PERMISSION, ctx)
+  }
+  await next()
+}
 ```
 

@@ -4,6 +4,7 @@ const {
   TOKEN_EXPIRED,
   TOKEN_INVALID,
   TOKEN_NOT_EXISTS,
+  NO_ADMIN_PERMISSION,
 } = require('../constant/error')
 
 /**
@@ -33,4 +34,15 @@ const auth = async (ctx, next) => {
   await next()
 }
 
-module.exports = { auth }
+/**
+ * 验证用户是否有管理员权限
+ */
+const checkAdminPermission = async (ctx, next) => {
+  const { isAdmin } = ctx.state.user
+  if (!isAdmin) {
+    return ctx.app.emit('error', NO_ADMIN_PERMISSION, ctx)
+  }
+  await next()
+}
+
+module.exports = { auth, checkAdminPermission }
