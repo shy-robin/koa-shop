@@ -7,7 +7,7 @@ class GoodsController {
       code: 0,
       message: '上传成功',
       result: {
-        filename: path.basename(file.filepath),
+        path: `${ctx.origin}/uploads/${path.basename(file.filepath)}`,
       },
     }
     await next()

@@ -1088,4 +1088,33 @@ const checkAdminPermission = async (ctx, next) => {
    ------WebKitFormBoundary7MA4YWxkTrZu0gW--
    ```
 
+### 4. 自动生成图片链接
+
+1. 安装 koa-static， 利用该中间件开启一个静态服务，指定一个文件夹，改文件夹里的所有资源都可以通过 http 请求进行访问；
+
+2. 配置中间件：
+
+   ```js
+   // eslint-disable-next-line no-undef
+   const publicPath = path.join(__dirname, '../../public')
    
+   // 开启静态服务，指定文件夹下的所有资源可以通过 http 请求进行访问
+   app.use(KoaStatic(publicPath))
+   ```
+
+3. 改写上传接口：
+
+   ```js
+     async upload(ctx, next) {
+       const { file } = ctx.request.files
+       ctx.body = {
+         code: 0,
+         message: '上传成功',
+         result: {
+           path: `${ctx.origin}/uploads/${path.basename(file.filepath)}`,
+         },
+       }
+       await next()
+     }
+   ```
+
