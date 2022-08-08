@@ -1,6 +1,9 @@
 # Koa Shop
 
-> 项目参考：https://github.com/jj112358/node-api
+> 项目参考：
+>
+> - https://github.com/jj112358/node-api
+> - https://chenshenhai.com/koa2-note/
 
 ## 一、项目初始化
 
@@ -955,3 +958,45 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlck5hbWUiOiJNaWtlIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTY1OTg2MTYxOSwiZXhwIjoxNjU5OTQ4MDE5fQ.9k2a67yjXwbZN1Onofeq43sdBSI66ftyr4vv9Q6OPvY
 
 ```
+
+## 七、自动加载路由
+
+按照之前的写法， 每增加一个路由文件，就需要在 src/app/index.js 中将导出的路由中间件引入，随着代码量的增加，src/app/index.js 中的路由引入代码也会越来越多。
+
+比较好的解决办法是在 src/router 中创建一个自动加载所有路由的 index.js 文件，这样在 src/app/index.js 只需导入一次路由文件即可。
+
+创建 src/router/index.js 文件并写入：
+
+```js
+const fs = require('fs')
+const Router = require('koa-router')
+
+const router = new Router()
+
+// eslint-disable-next-line no-undef
+fs.readdirSync(__dirname).forEach((file) => {
+  // 自动加载所有路由
+  if (file === 'index.js') return
+  const r = require('./' + file)
+  router.use(r.routes())
+})
+
+module.exports = router
+
+```
+
+修改 src/app/index.js：
+
+```js
+const router = require('../router')
+
+app.use(KoaBody()) // 注意，koa-body 中间件应作为首个中间件，这样后面的中间件的 ctx 才能解析出 ctx.request.body
+/*
+  中间件：userRouter.allowedMethods()：
+  如果不加这个中间件，如果接口是get请求，而前端使用post请求，会返回 404 状态码，接口未定义;
+  如果加了这个中间件，这种情况会返回405 Method Not Allowed ，提示 request method 不匹配，并在响应头返回接口支持的请求方法，更有利于调试。
+  注意，在 koa 中 use() 里面只能包含一个中间件，如果要加多个中间件则需要链式调用。
+*/
+app.use(router.routes()).use(router.allowedMethods())
+```
+

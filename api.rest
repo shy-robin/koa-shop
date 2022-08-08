@@ -29,3 +29,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwidXNlck5hb
   "oldPassword": "test",
   "newPassword": "test111"
 }
+
+###
+GET {{baseUrl}}/goods
