@@ -1036,3 +1036,56 @@ const checkAdminPermission = async (ctx, next) => {
 }
 ```
 
+### 3. 实现图片上传
+
+1. 选择 koa-body 插件，此插件可以实现文件格式的请求体解析；
+
+2. 在 src/app/index.js 中修改 koa-body 中间件的配置选项：
+
+   ```js
+   // 注意，koa-body 中间件应作为首个中间件，这样后面的中间件的 ctx 才能解析出 ctx.request.body
+   app.use(
+     KoaBody({
+       multipart: true, // 设置支持文件格式
+       formidable: {
+         // eslint-disable-next-line no-undef
+         uploadDir: path.join(__dirname, '../../public/uploads'), // 设置文件上传目录（注意，这里如果使用相对路径是相对于 process.cwd()，推荐使用绝对路径）
+         keepExtensions: true, // 设置保留文件后缀名
+       },
+     })
+   )
+   ```
+
+3. 在 src/controller/goods.js 中编写上传接口：
+
+   ```js
+     async upload(ctx, next) {
+       const { file } = ctx.request.files
+       ctx.body = {
+         code: 0,
+         message: '上传成功',
+         result: {
+           filename: path.basename(file.filepath),
+         },
+       }
+       await next()
+     }
+   ```
+
+4. 测试接口：
+
+   ```
+   ### 上传图片
+   POST {{baseUrl}}/goods/upload
+   Authorization: {{token}}
+   Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+   
+   ------WebKitFormBoundary7MA4YWxkTrZu0gW
+   Content-Disposition: form-data; name="file"; filename="test111.png"
+   Content-Type: image/png
+   
+   < /Users/shyrobin/Pictures/test.jpg
+   ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+   ```
+
+   
