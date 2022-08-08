@@ -1,9 +1,9 @@
-@baseUrl = http://localhost:3100
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlck5hbWUiOiJSb2JpbjMiLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE2NTk5MzAwMzgsImV4cCI6MTY2MDAxNjQzOH0.tsZ4xAz-waPjLmOPcDJ9MB-oF2R0ZHRo8t0bMdaa34E
-###
-GET {{baseUrl}}
+@port = 3100
+@baseUrl = http://{{host}}:{{port}}
 
 ### 登录
+
+# @name login
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -13,6 +13,10 @@ Content-Type: application/json
 }
 
 ### 注册
+
+@token = Bearer {{login.response.body.$.result.token}}
+
+# @name register
 POST {{baseUrl}}/users/register
 Content-Type: application/json
 
@@ -22,6 +26,8 @@ Content-Type: application/json
 }
 
 ### 修改密码
+
+# @name updatePassword
 PATCH {{baseUrl}}/users
 Content-Type: application/json
 Authorization: {{token}}
@@ -32,6 +38,8 @@ Authorization: {{token}}
 }
 
 ### 上传图片
+
+# @name upload
 POST {{baseUrl}}/goods/upload
 Authorization: {{token}}
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
