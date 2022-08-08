@@ -1142,3 +1142,42 @@ app.use(
 
 当文件类型不符合时，直接返回 500 。
 
+## 八、参数格式校验
+
+1. 安装插件 koa-parameter ;
+
+2. 配置中间件：
+
+   ```js
+   const KoaParameter = require('koa-parameter')
+   
+   // 校验请求参数格式，注意该中间件需要放在路由的前面
+   app.use(KoaParameter(app))
+   ```
+
+3. 设置校验格式，具体配置参考：https://github.com/node-modules/parameter
+
+   ```js
+     async create(ctx, next) {
+       try {
+         ctx.verifyParams({
+           name: 'string',
+           count: 'number',
+           price: 'number',
+         })
+       } catch (error) {
+         VERIFY_PARAMS_FAILED.result = error.errors
+         return ctx.app.emit('error', VERIFY_PARAMS_FAILED, ctx)
+       }
+   
+       ctx.body = {
+         code: 0,
+         message: '创建成功',
+         result: '',
+       }
+   
+       await next()
+     }
+   ```
+
+   

@@ -50,3 +50,15 @@ Content-Type: image/jpg
 
 < /Users/shyrobin/Pictures/test.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 新建商品
+
+POST {{baseUrl}}/goods
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "apple",
+  "count": 111,
+  "price": 11.111
+}

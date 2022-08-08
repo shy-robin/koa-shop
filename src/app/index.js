@@ -2,6 +2,7 @@
 const Koa = require('koa')
 const KoaBody = require('koa-body')
 const KoaStatic = require('koa-static')
+const KoaParameter = require('koa-parameter')
 const router = require('../router')
 const errorHandler = require('../constant/errorHandler')
 const path = require('path')
@@ -30,6 +31,9 @@ app.use(
     },
   })
 )
+
+// 校验请求参数格式，注意该中间件需要放在路由的前面
+app.use(KoaParameter(app))
 
 /*
   中间件：userRouter.allowedMethods()：

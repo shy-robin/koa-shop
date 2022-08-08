@@ -70,4 +70,14 @@ module.exports = {
     message: '文件类型不支持',
     result: '',
   },
+  VERIFY_PARAMS_FAILED: {
+    code: 10103,
+    message: '参数格式错误',
+    result: '',
+  },
+  CREATE_GOODS_FAILED: {
+    code: 10104,
+    message: '创建失败',
+    result: '',
+  },
 }
