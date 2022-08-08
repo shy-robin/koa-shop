@@ -1118,3 +1118,27 @@ const checkAdminPermission = async (ctx, next) => {
      }
    ```
 
+### 5. 限制上传文件类型
+
+主要在 koa-body 这个中间件内配置：
+
+```js
+app.use(
+  KoaBody({
+    multipart: true, // 设置支持文件格式
+    formidable: {
+      // eslint-disable-next-line no-undef
+      uploadDir: `${publicPath}/uploads`, // 设置文件上传目录（注意，这里如果使用相对路径是相对于 process.cwd()，推荐使用绝对路径）
+      keepExtensions: true, // 设置保留文件后缀名
+      filter({ mimetype }) {
+        // 对文件类型进行筛选
+        // keep only images
+        return mimetype && mimetype.includes('image')
+      },
+    },
+  })
+)
+```
+
+当文件类型不符合时，直接返回 500 。
+

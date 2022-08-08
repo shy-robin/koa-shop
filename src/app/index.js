@@ -22,6 +22,11 @@ app.use(
       // eslint-disable-next-line no-undef
       uploadDir: `${publicPath}/uploads`, // 设置文件上传目录（注意，这里如果使用相对路径是相对于 process.cwd()，推荐使用绝对路径）
       keepExtensions: true, // 设置保留文件后缀名
+      filter({ mimetype }) {
+        // 对文件类型进行筛选
+        // keep only images
+        return mimetype && mimetype.includes('image')
+      },
     },
   })
 )

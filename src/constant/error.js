@@ -65,4 +65,9 @@ module.exports = {
     message: '无管理员权限',
     result: '',
   },
+  UNSUPPORTED_FILE_TYPE: {
+    code: 10102,
+    message: '文件类型不支持',
+    result: '',
+  },
 }
