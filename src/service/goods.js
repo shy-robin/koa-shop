@@ -18,6 +18,14 @@ class GoodsService {
     })
     return rst > 0
   }
+  async restore(id) {
+    const rst = await Good.restore({
+      where: {
+        id,
+      },
+    })
+    return rst > 0
+  }
 }
 
 module.exports = new GoodsService()

@@ -90,4 +90,9 @@ module.exports = {
     message: '删除失败',
     result: '',
   },
+  RESTORE_GOODS_FAILED: {
+    code: 10107,
+    message: '恢复失败',
+    result: '',
+  },
 }

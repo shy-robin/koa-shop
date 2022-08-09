@@ -63,7 +63,12 @@ Authorization: {{token}}
   "price": 11.111
 }
 
-### 删除商品
+### 下架商品
 
-DELETE  {{baseUrl}}/goods/1
+DELETE  {{baseUrl}}/goods/1/sale
+Authorization: {{token}}
+
+### 上架商品
+
+PATCH {{baseUrl}}/goods/1/sale
 Authorization: {{token}}

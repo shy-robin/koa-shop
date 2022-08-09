@@ -1241,7 +1241,17 @@ const Good = seq.define(
   }
 ```
 
+## 十、RESTful API
 
+https://www.runoob.com/w3cnote/restful-architecture.html
+
+https://juejin.cn/post/6876377628371058701
+
+https://restfulapi.cn/
+
+- 一个 URI 应对应唯一的资源，处理资源的操作应使用 http 请求方法表示（GET、POST、PUT、DELETE），URI 中不包含动作，应为名词；
+- RESTful是面向资源的，所以接口都是一些名词，尤指复数名词。简单的CRUD还是很合适的，但很多业务逻辑都很难将其抽象为资源，比如说登录/登出，怎么看也不是一个资源，如果硬是抽象为创建一个session/删除一个session。这不仅反直觉，还违背了RESTful的思想；
+- 出错信息应包含两部分：状态码（粗略），响应体（详细）。
 
 
 

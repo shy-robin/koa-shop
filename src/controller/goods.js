@@ -5,8 +5,13 @@ const {
   CREATE_GOODS_FAILED,
   ID_IS_NULL,
   REMOVE_GOODS_FAILED,
+  RESTORE_GOODS_FAILED,
 } = require('../constant/error')
-const { create: createGoods, remove: removeGoods } = require('../service/goods')
+const {
+  create: createGoods,
+  remove: removeGoods,
+  restore: restoreGoods,
+} = require('../service/goods')
 
 class GoodsController {
   async upload(ctx, next) {
@@ -79,8 +84,32 @@ class GoodsController {
         },
       }
     } catch (error) {
-      return
+      return ctx.app.emit('error', REMOVE_GOODS_FAILED, ctx)
     }
+    await next()
+  }
+
+  async restore(ctx, next) {
+    const { id } = ctx.request.params
+    if (!id) {
+      return ctx.app.emit('error', ID_IS_NULL, ctx)
+    }
+    try {
+      const rst = await restoreGoods(id)
+      if (!rst) {
+        return ctx.app.emit('error', RESTORE_GOODS_FAILED, ctx)
+      }
+      ctx.body = {
+        code: 0,
+        message: '恢复成功',
+        result: {
+          id,
+        },
+      }
+    } catch (error) {
+      return ctx.app.emit('error', RESTORE_GOODS_FAILED, ctx)
+    }
+
     await next()
   }
 }
