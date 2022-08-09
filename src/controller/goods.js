@@ -3,8 +3,10 @@ const {
   UNSUPPORTED_FILE_TYPE,
   VERIFY_PARAMS_FAILED,
   CREATE_GOODS_FAILED,
+  ID_IS_NULL,
+  REMOVE_GOODS_FAILED,
 } = require('../constant/error')
-const { create: createGoods } = require('../service/goods')
+const { create: createGoods, remove: removeGoods } = require('../service/goods')
 
 class GoodsController {
   async upload(ctx, next) {
@@ -56,6 +58,29 @@ class GoodsController {
       return ctx.app.emit('error', CREATE_GOODS_FAILED, ctx)
     }
 
+    await next()
+  }
+
+  async remove(ctx, next) {
+    const { id } = ctx.request.params
+    if (!id) {
+      return ctx.app.emit('error', ID_IS_NULL, ctx)
+    }
+    try {
+      const rst = await removeGoods(id)
+      if (!rst) {
+        return ctx.app.emit('error', REMOVE_GOODS_FAILED, ctx)
+      }
+      ctx.body = {
+        code: 0,
+        message: '删除成功',
+        result: {
+          id,
+        },
+      }
+    } catch (error) {
+      return
+    }
     await next()
   }
 }

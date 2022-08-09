@@ -80,4 +80,14 @@ module.exports = {
     message: '创建失败',
     result: '',
   },
+  ID_IS_NULL: {
+    code: 10105,
+    message: 'id 为空',
+    result: '',
+  },
+  REMOVE_GOODS_FAILED: {
+    code: 10106,
+    message: '删除失败',
+    result: '',
+  },
 }

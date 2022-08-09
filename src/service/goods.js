@@ -10,6 +10,14 @@ class GoodsService {
 
     return rst.dataValues
   }
+  async remove(id) {
+    const rst = await Good.destroy({
+      where: {
+        id,
+      },
+    })
+    return rst > 0
+  }
 }
 
 module.exports = new GoodsService()

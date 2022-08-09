@@ -58,7 +58,12 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "name": "apple",
-  "count": 111,
+  "name": "apple2",
+  "count": 1112,
   "price": 11.111
 }
+
+### 删除商品
+
+DELETE  {{baseUrl}}/goods/1
+Authorization: {{token}}

@@ -1180,4 +1180,68 @@ app.use(
      }
    ```
 
-   
+## 九、删除数据
+
+### 1. 硬删除
+
+直接将数据从数据库中删除，不推荐。
+
+```js
+await Good.destroy({
+  where: {
+    id: 1
+  },
+  force: true // 强制删除，如果设置了 paranoid
+});
+```
+
+### 2. 软删除
+
+删除的是否赋予数据一个 deletedAt，可以调用 restore 方法恢复数据。参考：https://sequelize.org/docs/v6/core-concepts/paranoid/
+
+设置 model 为 paranoid 模式：
+
+```js
+const Good = seq.define(
+  'Good',
+  {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: '商品名称',
+    },
+    count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      comment: '商品数量',
+    },
+    price: {
+      type: DataTypes.DECIMAL(2),
+      allowNull: false,
+      comment: '商品价格',
+    },
+  },
+  {
+    paranoid: true,
+  }
+)
+```
+
+编写删除逻辑：
+
+```js
+  async remove(id) {
+    const rst = await Good.destroy({
+      where: {
+        id,
+      },
+    })
+    console.log(rst)
+    return rst[0] > 0
+  }
+```
+
+
+
+
+
